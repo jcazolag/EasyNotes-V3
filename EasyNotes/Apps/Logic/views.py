@@ -19,7 +19,7 @@ def whisper(request):
             fs = FileSystemStorage()
             name = audio.name
             filename = fs.save(name, audio)
-            model = wp.load_model("tiny")
+            model = wp.load_model("small")
             result = model.transcribe(f"media/{name}", fp16=False, verbose=None)  
             if os.path.exists(f'media/{name}'):
                         os.remove(f'media/{name}')
