@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Transcribe{% endblock  %}
+
+{% block css %}
+
+{% endblock  %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex flex-column" style="padding:5%;">
+    <div class="card bg-dark">
+        {% if option == "quick" %}
+        <div class="card-header text-center bg-dark text-white">
+            <h5><strong>Quick Transcribe: {{ name }}</strong></h5>
+        </div>
+        <div class="card-body bg-light">
+            <div class="container">
+                <textarea class="form-control" disabled="True" rows="10">{{ result }}</textarea>
+            </div>
+        </div>    
+        {% elif option == "create" and group_id %}
+        <div class="card-header text-center bg-dark text-white">
+            <h5><strong>Note</strong></h5>
+        </div>
+        <div class="card-body bg-light">
+            <div class="container">
+                <textarea class="form-control" disabled="True" rows="10">{{ result }}</textarea>
+            </div>
+        </div>
+        <div class="card-footer">
+            <!--Modal btn-->
+            <button type="button" class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#createNoteModal">
+                <i class="fa-regular fa-square-plus"></i> Save Note
+            </button>
+            <!--Modal-->
+            <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4>New Note</h4>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="/user/createnote/" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Note title:</label>
+                            <input class="form-control" type="text" name="title" minlength="1" maxlength="100" value="{{ name }}" autofocus required>
+                            <input type="hidden" name="result" value="{{ result }}">
+                            <input type="hidden" name="group_id" value="{{ group_id }}">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-dark"><i class="fa-regular fa-square-plus"></i> Save Note</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+    
+{% endblock  %}
+
+{% block scripts %}
+{% endblock %}

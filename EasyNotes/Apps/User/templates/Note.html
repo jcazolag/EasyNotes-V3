@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{{ note.title }}{% endblock  %}
+
+{% block css %}
+{% endblock  %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex flex-column" style="padding:5%;">
+    <input type="hidden" id="group_id" name="group_id" value="{{ group_id }}">
+    <a class="icon-link" id="link_back" href="#">
+        <i class="fa-solid fa-arrow-left fa-bounce"></i>
+        Go back
+    </a>
+    <div class="card bg-dark text-white">
+        <div class="card-header text-center ">
+            <h3>
+                {{ note.title }}
+            </h3>
+        </div>
+        <div class="card-body"> 
+            <div class="container">
+                <textarea class="form-control" disabled="True" rows="10">{{ note.text }}</textarea>
+                <hr>
+            </div>
+            <div class="container text-start">
+                <h6 class="color-white">{{ note.creation_date}}</h6>
+            </div>
+        </div>
+        <div class="card-footer ">
+            <div class="row row-cols-2 row-cols-md-2 g-4">
+                <div class="col text-start">
+                    <div class="dropdown" data-bs-theme="dark">
+                        <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-gears"></i> Actions
+                        </button>
+                        <ul class="dropdown-menu" >
+                            <li>
+                                <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#SummaryNoteModal">
+                                    <i class="fa-solid fa-scroll"></i> Summary
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#DateNoteModal">
+                                    <i class="fa-solid fa-calendar-days"></i> Dates
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#StudyMaterialNoteModal">
+                                    <i class="fa-sharp fa-solid fa-book"></i> Study Material
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col text-end">
+                    <div class="dropdown" data-bs-theme="dark">
+                        <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-gears"></i> Note Options
+                        </button>
+                        <ul class="dropdown-menu" >
+                            <li>
+                                <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#UpdateNoteModal">
+                                    <i class="fa-solid fa-pencil"></i> Update
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#DeleteNoteModal">
+                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                </button>
+                            </li>
+                        </ul>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Update -->
+    <div class="modal fade" id="UpdateNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Update: {{ note.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="#" id="update_note_form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                <div class="mb-3">   
+                    <label for="note_title" class="col-form-label">Note title:</label>
+                    <input class="form-control" type="text" id="note_title" name="note_title" minlength="1" maxlength="100" value="{{ note.title }}" autofocus required>
+                </div> 
+                <div class="mb-3">
+                    <label for="note_text" class="col-form-label">Note:</label>
+                    <textarea class="form-control" type="text" id="note_text" name="note_text" rows="10">{{ note.text }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-dark"><i class="fa-solid fa-pencil"></i> Update Note</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Modal Delete -->
+    <div class="modal fade" id="DeleteNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Delete: {{ note.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="#" id="delete_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-dark"><i class="fa-solid fa-trash-can"></i> Delete Note</button>
+                    </div>
+                </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Modal Summary -->
+    <div class="modal fade" id="SummaryNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Summary: {{ note.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if summary  %}
+                {% for summ in summary  %}
+                <div class="mb-3">
+                    <label for="summary_text" class="col-form-label">Summary:</label>
+                    <textarea class="form-control" type="text" id="summary_text" name="summary_text" rows="10">{{ summ.text }}</textarea>
+                </div>
+                <form action="#" id="summary_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                </form>
+                {% endfor %}
+                {% else %}
+                <h5>There is no Summary</h5>
+                <form action="#" id="summary_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-dark"><i class="fa-solid fa-scroll"></i> Create Summary</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Modal Date -->
+    <div class="modal fade" id="DateNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Date: {{ note.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if date  %}
+                {% for dat in date  %}
+                <div class="mb-3">
+                    <label for="date_text" class="col-form-label">Date:</label>
+                    <textarea class="form-control" type="text" id="date_text" name="date_text" rows="10">{{ dat.description }}</textarea>
+                </div>
+                <form action="#" id="date_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                </form>
+                {% endfor %}
+                
+                {% else %}
+                <form action="#" id="date_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-dark"><i class="fa-solid fa-calendar-days"></i> Search for Dates</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Modal Study Material -->
+    <div class="modal fade" id="StudyMaterialNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Study Material: {{ note.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if study_material  %}
+                {% for material in study_material %}
+                <div class="mb-3">
+                    <label for="study_material_text" class="col-form-label">Material:</label>
+                    <textarea class="form-control" type="text" id="study_material_text" name="study_material_text" rows="10">{{ material.text }}</textarea>
+                </div>
+                <form action="#" id="study_material_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                </form>
+                {% endfor %}
+                
+                {% else %}
+                <form action="#" id="study_material_note_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="note_id" id="note_id" value="{{ note.id }}">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-dark"><i class="fa-sharp fa-solid fa-book"></i> Search for study material</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- EndModal -->
+</div>
+{% endblock  %}
+
+{% block scripts %}
+<script src="{% static 'js/note.js' %}"></script>
+{% endblock %}

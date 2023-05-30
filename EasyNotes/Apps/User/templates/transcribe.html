@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Transcribe{% endblock  %}
+
+{% block css %}
+
+{% endblock  %}
+
+{% block content %}
+    <div class="container-fluid min-vh-100 d-flex flex-column" style="padding:5%;">
+        <div class="card bg-dark">
+            {% if option == "quick" %}
+            <div class="card-header text-center bg-dark text-white">
+                <h5><strong>Quick Transcribe</strong></h5>
+            </div>
+            <div class="card-body bg-light">
+                <form action="/user/quicktranscribe/" method="post" enctype="multipart/form-data" id="Transcribe_form">
+                    {% csrf_token %}
+                    <input type="hidden" id="name" name="name" value="">
+                    <input type="hidden" id="hiddenResult" name="result" value="">
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Select your audio file</label>
+                        <input onchange="return fileValidation()" class="form-control" type="file" id ="audio_file" name="audio_file" accept="audio/mp3, audio/wav, audio/mp4 , audio/mpeg , audio/mpga , audio/m4a , audio/webm"  align="center">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-dark btn-lg" id="auido_btn">Transcribe</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-dark text-white">
+                <h5>
+                    Transcribe without saving
+                </h5>
+            </div>
+            {% elif option == "create" and group_id %}
+            <div class="card-header text-center bg-dark text-white">
+                <h5><strong>New Note</strong></h5>
+            </div>
+            <div class="card-body bg-light">
+                <form action="/user/newnote/" method="post" enctype="multipart/form-data" id="Transcribe_form">
+                    {% csrf_token %}
+                    <input type="hidden" id="hiddenResult" name="result" value="">
+                    <input type="hidden" id="name" name="name" value="">
+                    <input type="hidden" id="transcribe" name="transcribe" value="1">
+                    <input type="hidden" id="hiddenGroup_Id" name="group_id" value="{{ group_id }}">
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Select your audio file</label>
+                        <input onchange="return fileValidation()" class="form-control" type="file" id ="audio_file" name="audio_file" accept="audio/mp3, audio/wav, audio/mp4 , audio/mpeg , audio/mpga , audio/m4a , audio/webm"  align="center">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-dark btn-lg" id="auido_btn">Transcribe</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-dark text-white">
+                <h5>
+                    Save Transcription
+                </h5>
+            </div>
+            {% endif %}  
+        </div>    
+    </div>
+
+    
+{% endblock  %}
+
+{% block scripts %}
+<script src="{% static 'js/quickTranscribe.js' %}"></script>
+{% endblock %}

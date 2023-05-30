@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}My Groups{% endblock  %}
+
+{% block css %}
+<style>
+    .link-button { 
+     background: none;
+     border: none;
+     color: #1a0dab;
+     cursor: pointer;
+     text-overflow: ellipsis;
+}
+</style>
+{% endblock  %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex flex-column" style="padding:5%;">
+    <div class="card bg-dark ">
+        <div class="card-header text-center bg-dark text-white">
+            <h3>
+                My groups
+            </h3>
+        </div>
+        <div class="card-body bg-light">
+            <div class="container-fluid min-vh-100 d-flex flex-column">
+                <div class="row row-cols-1 row-cols-md-1 g-4">
+                    <div class="col">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#creategroupModal">
+                            <i class="fa-solid fa-folder-plus"></i> New Group
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                {% if groups %}
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    {% for group in groups %}
+                        <div class="col">
+                            <div class="card text-dark bg-info bg-gradient">
+                                <div class="card-body ">
+                                    <form action="/user/group/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="group_id" value="{{ group.id }}">
+                                        <h4 class="card-text text-truncate text-center">
+                                            <button type="submit" class="btn btn-link link-dark stretched-link link-offset-2 link-underline link-underline-opacity-0 ">
+                                                {{ group.title }}
+                                            </button>
+                                        </h4>   
+                                    </form>
+                                </div>
+                                <div class="card-footer ">{{ group.creation_date }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>    
+                {% else %}
+                <div class="row row-cols-1 row-cols-md-1 g-4">
+                    <div class="col">
+                        <h5>There are no groups</h5>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-footer bg-dark color-white">
+           <div class="container">
+                <div class="row row-cols-1 row-cols-md-1 g-4">
+                    <div class="col text-center">
+                        <h3 class="text-white">{{ user.username }}</h3>
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>
+     <!-- Modal -->
+     <div class="modal fade" id="creategroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>New Group</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/user/creategroups/" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">Group title:</label>
+                    <input class="form-control" type="text" name="title" minlength="1" maxlength="100" autofocus required>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-dark"><i class="fa-regular fa-square-plus"></i> Save Group</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock  %}
+
+{% block scripts %}
+<script src="{% static 'js/userGroups.js' %}"></script>
+{% endblock %}

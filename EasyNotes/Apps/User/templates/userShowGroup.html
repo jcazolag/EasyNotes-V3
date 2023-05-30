@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{{ group.title }}{% endblock  %}
+
+{% block css %}
+{% endblock  %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex flex-column" style="padding:5%;">
+    <a class="icon-link" href="{% url 'groups' %}">
+        <i class="fa-solid fa-arrow-left fa-bounce"></i>
+        Go back
+    </a>
+    <div class="card bg-dark">
+        <div class="card-header text-center bg-dark  text-white">
+            <h3>
+                {{ group.title }}
+            </h3>
+            
+        </div>
+        <div class="card-body bg-light ">
+            <div class="container-fluid min-vh-100 d-flex flex-column">
+                <div class="row row-cols-1 row-cols-md-1 g-4">
+                    <div class="col text-start">
+                        <form action="/user/newnote/" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                            <input type="hidden" name="transcribe" value="transcribe">
+                            <a class="btn btn-dark btn-lg" href="#" onclick="this.parentNode.submit();"><i class="fa-solid fa-file-circle-plus"></i> New Note</a>
+                        </form> 
+                    </div>
+                </div>
+                <hr>
+
+                {% if notes %}
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    {% for note in notes %}
+                        <div class="col">
+                            <div class="card bg-dark bg-gradient text-white">
+                                <div class="card-body ">
+                                    <form action="/user/note/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="note_id" value="{{ note.id }}">
+                                        <h4 class="card-text text-truncate text-center">
+                                            <button type="submit" class="btn btn-link link-light stretched-link link-offset-2 link-underline link-underline-opacity-0 ">
+                                                {{ note.title }}
+                                            </button>
+                                        </h4>
+                                    </form>
+                                </div>
+                                <div class="card-footer ">{{ note.creation_date }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>    
+                
+                {% else %}
+                <h5>There are no Notes</h5>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-footer bg-dark text-white ">
+            <div class="row row-cols-2 row-cols-md-2 g-4">
+                <div class="col">
+                    <h6 class="text-start color-white">{{ group.creation_date}}</h6> 
+                </div>
+                <div class="col text-end">
+                    <div class="dropdown" data-bs-theme="dark">
+                        <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-gears"></i> Group Options
+                        </button>
+                        <ul class="dropdown-menu" >
+                            <li>
+                                <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#UpdateGroupModal">
+                                    <i class="fa-solid fa-pencil"></i> Update
+                                </button>
+                            </li>
+                          <li>
+                            <button type="button" class="btn btn-dark dropdown-item" data-bs-toggle="modal" data-bs-target="#DeleteGroupModal">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+                          </li>
+                        </ul>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Update -->
+    <div class="modal fade" id="UpdateGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Update: {{ group.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="#" id="update_group_form" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input type="hidden" name="group_id" id="group_id" value="{{ group.id }}">
+                    <label for="recipient-name" class="col-form-label">Group title:</label>
+                    <input class="form-control" type="text" id="group_title" name="group_title" minlength="1" maxlength="100" value="{{ group.title }}" autofocus required>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-dark"><i class="fa-solid fa-pencil"></i> Update Group</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- Modal Delete -->
+    <div class="modal fade" id="DeleteGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4>Delete: {{ group.title }}</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if notes  %}
+                <div class="mb-3">
+                    <p>
+                        This group contains the following Notes:
+                        <ul>
+                        {% for note in notes %}
+                            <li>
+                                {{ note.title }}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </p>
+                </div>
+                <hr>
+                {% endif %}
+                <form action="/user/delete/" id="delete_group_form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" name="group_id" id="group_id" value="{{ group.id }}">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-dark"><i class="fa-solid fa-trash-can"></i> Delete Group</button>
+                    </div>
+                </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- EndModal -->
+</div>
+{% endblock  %}
+
+{% block scripts %}
+<script src="{% static 'js/UserShowGroup.js' %}"></script>
+{% endblock %}

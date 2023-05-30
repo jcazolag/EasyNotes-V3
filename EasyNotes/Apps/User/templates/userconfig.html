@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Your Profile{% endblock  %}
+
+{% block css %}
+<link type='text/css' href='{% static "css/userconfig.css" %}' rel='stylesheet'>
+<style>
+    .mt-4 {
+        margin-top: 0rem !important;
+    }
+</style>
+{% endblock  %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="row flex-grow-1">
+        <div class="col-md-2 d-flex flex-column" style="background-color: #212125; color: white;">
+            <div class="d-grid gap-2 text-center d-flex flex-column" style="padding: 3%;">
+                <hr>
+                <button class="btn btn-outline-light" type="button">Button</button>
+                <button class="btn btn-outline-light" type="button">Button</button>
+              </div>
+        </div>
+        <div class="col-md-10  border">
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

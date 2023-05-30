@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block title %}EasyNotes{% endblock %}
+
+{% block css %}
+<link type='text/css' href='{% static "css/not_auth_home.css"%}' rel='stylesheet'>
+{% endblock %}
+
+{% block content %}
+<div class="background-image">
+    <div  class="container" id="container">
+        <h1 >Improve your studies with EasyNotes</h1>
+        <br>
+        <p>EasyNotes is the tool that will allow you to <br>optimize the learning process of your classes.</p>
+        <br>
+        <div class="container">
+            <a href="{% url 'signupaccount' %}">
+                <button type="button" class="btn btn-outline-light" >
+                    <h4>Sign up in our platform</h4>
+                </button> 
+            </a>
+            <br><br>
+            <a href="{% url 'loginaccount' %}">
+                ¿Already registered? Sign in
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock  %}
